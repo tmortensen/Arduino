@@ -113,19 +113,19 @@ void loop(void)
 
 void SerialSay(char* input) 
 {
- Serial.println(input);
+	Serial.println(input);
 }
 
 // function to print the humidity and temp
 float getHumidity()
 {
-  float humd = myHumidity.readHumidity();
+	float humd = myHumidity.readHumidity();
 	return humd;
 }
 
 float getHumidityTemp()
 {
-  float Ctemp = myHumidity.readTemperature();
+	float Ctemp = myHumidity.readTemperature();
 	return Celcius2Fahrenheit(Ctemp);
 }
 
@@ -180,7 +180,7 @@ int Celcius2Fahrenheit(int celcius)
 void establishContact() {
 	while (Serial.available() <= 0) {
 		//Serial.println("0,0,0");   // send an initial string
-//		delay(300);
+		//		delay(300);
 	}
 }
 
