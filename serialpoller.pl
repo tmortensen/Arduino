@@ -19,7 +19,7 @@ our $debug = 1;
 my $SCRIPT = basename($0);
 my $LOGFILE = "/tmp/$SCRIPT.log";
 my $CACHE_DIR="/dev/shm";
-my $CACHE_FILE=$CACHE_DIR . '/.' . $SCRIPT . ".tmp";
+my $CACHE_FILE=$CACHE_DIR . '/' . 'greenhouse.info';
 my $RUNASUSER = 'nobody'; # for DropPrivs($RUNASUSER); 
 
 
@@ -41,19 +41,20 @@ CacheResults($CACHE_FILE, $data);
 sub getPayload {
 
 	requestData();
+	sleep 2;
 	while (1) {
 # Poll to see if any data is coming in
 		my $char = $port->lookfor();
 		if ($char) { 
 			chop $char;
 			#say $char;
-			if ($char =~ m/(.*),(.*),(.*),(.*),(.*)/) {
+			if ($char =~ m/(\d{2}\.\d{2}),(\d{2}\.\d{2}),(\d{2}\.\d{2}),(\d{2}\.\d{2}),(\d{2}\.\d{2})/) {
 				my $Temp1 = $1;
 				my $Temp2 = $2;
 				my $Temp3 = $3;
 				my $Humidity = $4;
 				my $HumidityTemp = $5;
-				my $data = "Temp1:$Temp1 Temp2:$Temp2 Temp3:$Temp3 Humidity:$Humidity HumidityTemp:$HumidityTemp";
+				my $data = "Temp1:$Temp1\nTemp2:$Temp2\nTemp3:$Temp3\nHumidity:$Humidity\nHumidityTemp:$HumidityTemp";
 				$now = localtime;
 				say "$now : got chop and sauce [$data]" if $debug;
 				return \$data;
@@ -61,7 +62,6 @@ sub getPayload {
 			$now = localtime;
 			say "$now : chop but no sauce [$char]" if $debug;
 		}
-		return 0;
 	}
 }
 
