@@ -14,8 +14,7 @@ use POSIX qw(setuid getuid);
 my $now = localtime;
 my $SERIAL_PORT = '/dev/ttyACM0';
 my $max_cache_age = 60; # 1 Minutes
-#our $debug = undef;
-our $debug = 1;
+our $debug = undef;
 my $SCRIPT = basename($0);
 my $LOGFILE = "/tmp/$SCRIPT.log";
 my $CACHE_DIR="/dev/shm";
@@ -41,7 +40,6 @@ CacheResults($CACHE_FILE, $data);
 sub getPayload {
 
 	requestData();
-	sleep 2;
 	while (1) {
 # Poll to see if any data is coming in
 		my $char = $port->lookfor();
@@ -60,7 +58,7 @@ sub getPayload {
 				return \$data;
 			}
 			$now = localtime;
-			say "$now : chop but no sauce [$char]" if $debug;
+			say "$now : chop but no sauce [$char]";
 		}
 	}
 }
@@ -68,7 +66,6 @@ sub getPayload {
 sub requestData {
 	sleep 2;
 	$port->write("1");
-	sleep 2;
 }
 
 sub CacheResults {
