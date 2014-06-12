@@ -46,7 +46,12 @@ sub getPayload {
 	requestData();
 	while (1) {
 		$counter++;
-		LogIt("Counter [$counter]") if $debug;
+		if ( $counter == 10000 ) {
+		  LogIt("Counter Max Reached [$counter]");
+		}
+		elsif ( $counter < 10000 ) {
+		  LogIt("+", '') if $debug;
+		}
 		#Poll to see if any data is coming in
 		my $char = $port->lookfor();
 		if ($char) { 
@@ -57,8 +62,9 @@ sub getPayload {
 				my $Temp3 = $3;
 				my $Humidity = $4;
 				my $HumidityTemp = $5;
-				my $data = "Temp1:$Temp1\nTemp2:$Temp2\nTemp3:$Temp3\nHumidity:$Humidity\nHumidityTemp:$HumidityTemp";
-				LogIt("got chop and sauce [$data]") if $debug;
+				my $data = "Temp1:$Temp1\nTemp2:$Temp2\nTemp3:$Temp3\nHumidity:$Humidity\nHumidityTemp:$HumidityTemp\n";
+				LogIt("", "\n") if $debug;
+				LogIt("Match Found") if $debug;
 				return \$data;
 		  }
 		  LogIt("chop but no sauce [$char]") if $debug;
@@ -103,7 +109,7 @@ sub CacheData {
 	if ( ! -e $cachedir ) {
 		LogError("Cachedir does not exist [$cachedir]");
 	}
-	LogIt("Creating new Cache File [$cache_file_name] for [$$data]") if $debug;
+	LogIt("Creating new Cache File [$cache_file_name]") if $debug;
 	open( my $output_file, '>', $cache_file_name ) or LogError("an error occured writing file [$cache_file_name]: $!");
 	flock($output_file, LOCK_EX);
 	print $output_file $$data;
@@ -131,11 +137,22 @@ sub FileAge {
 sub LogIt {
 	my $now = localtime;
 	my $msg = shift;
-	my $lastreturncode = $? << 8;
+	my $terminator = shift;
+	my $logline;
+	my $lastreturncode;
+	if ( ! defined $terminator ) { 
+		$terminator = "\n";
+	  $lastreturncode = $? << 8;
+		$logline = "$0:$lastreturncode:$now:$msg$terminator";
+	}
+	else {
+		$logline = "$msg$terminator";
+	}
 	open(my $log, ">>$LOGFILE") or die "Could not open log to write: $!";
-	print $log "$0:$lastreturncode:$now:$msg\n";
+	print $log $logline;
 	close($log);
 }
+
 
 sub ClearLog {
 	my $now = localtime;
@@ -161,8 +178,3 @@ sub DropPrivs {
 		setuid($Zuid);
 	}
 }
-
-
-
-
-
