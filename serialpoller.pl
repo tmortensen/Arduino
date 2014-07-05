@@ -48,6 +48,7 @@ sub getPayload {
 		$counter++;
 		if ( $counter == 10000 ) {
 		  LogIt("Counter Max Reached [$counter]");
+			die "DIE: Unable to get results\n";
 		}
 		elsif ( $counter < 10000 ) {
 		  LogIt("+", '') if $debug;
